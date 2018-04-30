@@ -161,26 +161,26 @@ utils.createPrototypeObject(
             }
         },
 
-        drawPreRenderStages: function(state, previousRenderLeaf) {
+        drawPreRenderStages: function(state, previousRenderLeaf, renderingMask) {
             var previousLeaf = previousRenderLeaf;
             for (var i = 0, l = this._preRenderList.length; i < l; ++i) {
                 var sg = this._preRenderList[i].renderStage;
-                previousLeaf = sg.draw(state, previousLeaf);
+                previousLeaf = sg.draw(state, previousLeaf, renderingMask);
             }
             return previousLeaf;
         },
 
-        draw: function(state, previousRenderLeaf) {
+        draw: function(state, previousRenderLeaf, renderingMask) {
             if (this._camera && this._camera.getInitialDrawCallback()) {
                 // if we have a camera with a final callback invoke it.
                 this._camera.getInitialDrawCallback()(state);
             }
 
-            var previousLeaf = this.drawPreRenderStages(state, previousRenderLeaf);
+            var previousLeaf = this.drawPreRenderStages(state, previousRenderLeaf, renderingMask);
 
-            previousLeaf = this.drawImplementation(state, previousLeaf);
+            previousLeaf = this.drawImplementation(state, previousLeaf, renderingMask);
 
-            previousLeaf = this.drawPostRenderStages(state, previousLeaf);
+            previousLeaf = this.drawPostRenderStages(state, previousLeaf, renderingMask);
 
             if (this._camera && this._camera.getFinalDrawCallback()) {
                 // if we have a camera with a final callback invoke it.
@@ -202,11 +202,11 @@ utils.createPrototypeObject(
             }
         },
 
-        drawPostRenderStages: function(state, previousRenderLeaf) {
+        drawPostRenderStages: function(state, previousRenderLeaf, renderingMask) {
             var previousLeaf = previousRenderLeaf;
             for (var i = 0, l = this._postRenderList.length; i < l; ++i) {
                 var sg = this._postRenderList[i].renderStage;
-                previousLeaf = sg.draw(state, previousLeaf);
+                previousLeaf = sg.draw(state, previousLeaf, renderingMask);
             }
             return previousLeaf;
         },
@@ -270,7 +270,7 @@ utils.createPrototypeObject(
             fbo.apply(state);
         },
 
-        drawImplementation: function(state, previousRenderLeaf) {
+        drawImplementation: function(state, previousRenderLeaf, renderingMask) {
             var gl = state.getGraphicContext();
 
             this.applyCamera(state);
@@ -303,7 +303,8 @@ utils.createPrototypeObject(
             var previousLeaf = RenderBin.prototype.drawImplementation.call(
                 this,
                 state,
-                previousRenderLeaf
+                previousRenderLeaf,
+                renderingMask
             );
 
             return previousLeaf;

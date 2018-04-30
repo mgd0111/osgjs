@@ -38,6 +38,7 @@ var StateSet = function() {
     this._hasUniform = false;
 
     this._drawID = -1; // used by the RenderLeaf to decide if it should apply the stateSet
+    this._renderingMask = ~0x0;
 };
 
 StateSet.AttributePair = function(attr, value) {
@@ -70,7 +71,12 @@ utils.createPrototypeObject(
         getDrawID: function() {
             return this._drawID;
         },
-
+        setRenderingMask: function(mask) {
+            this._renderingMask = mask;
+        },
+        getRenderingMask: function() {
+            return this._renderingMask;
+        },
         getAttributePair: function(attribute, value) {
             return new StateSet.AttributePair(attribute, value);
         },
