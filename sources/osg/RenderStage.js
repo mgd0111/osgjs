@@ -211,22 +211,22 @@ utils.createPrototypeObject(
             return previousLeaf;
         },
 
-        applyCamera: function(state) {
+        applyCamera: function(state, camera) {
             var gl = state.getGraphicContext();
-            if (this._camera === undefined) {
+            if (!camera) {
                 gl.bindFramebuffer(gl.FRAMEBUFFER, null);
                 return;
             }
-            var viewport = this._camera.getViewport();
-            var fbo = this._camera.frameBufferObject;
+            var viewport = camera.getViewport();
+            var fbo = camera.frameBufferObject;
 
             if (!fbo) {
                 fbo = new FrameBufferObject();
-                this._camera.frameBufferObject = fbo;
+                camera.frameBufferObject = fbo;
             }
 
             if (fbo.isDirty()) {
-                var attachments = this._camera.getAttachments();
+                var attachments = camera.getAttachments();
 
                 // framebuffer texture and renderbuffer must be same dimension
                 // otherwise framebuffer is incomplete
@@ -272,8 +272,7 @@ utils.createPrototypeObject(
 
         drawImplementation: function(state, previousRenderLeaf, renderingMask) {
             var gl = state.getGraphicContext();
-
-            this.applyCamera(state);
+            this.applyCamera(state, this._camera);
 
             // projection clipping
             if (this._viewport === undefined) {
